@@ -11,7 +11,7 @@ part=(
     "recovery   null  null  null    20901888  0"
     "system     null  null  null  1610612736  0"
     "vendor     null  null  null   134217728  0"
-    "userdata   null  null  null  4436525056  0"
+    "userdata   null  null  null 12628525056  0"
     "cache      null  null  null   943718400  0"
     "metadata   null  null  null       32768  0"
     "misc       null  null  null        8192  0"
