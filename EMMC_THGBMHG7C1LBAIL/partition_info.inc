@@ -14,8 +14,6 @@ part=(
     "userdata   null  null  null  4436525056  0"
     "cache      null  null  null   943718400  0"
     "metadata   null  null  null       32768  0"
-    "hibernate  null  null  null   268435456  0"
-    "am         null  null  null   314572800  0"
     "misc       null  null  null        8192  0"
     "vbmeta     null  null  null       65536  0"
     "dtb        null  null  null      131072  0"
