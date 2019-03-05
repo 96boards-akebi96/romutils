@@ -50,7 +50,7 @@ AC_MSG_RESULT($armtf)
 AC_MSG_CHECKING(ROM product id is)
 case "$targetboard" in
 	ph1-ld20-global-v4)
-		romproductname=EMMC_THGBMHG6C1LBAIL
+		romproductname=EMMC_THGBMHG7C1LBAIL
 		;;
 	*)
 		;;
