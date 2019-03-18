@@ -1,0 +1,38 @@
+target_proc  ?= @targetproc@
+target_board ?= @targetboard@
+sub_feature  ?= @subfeature@
+usb_update_name ?= @usbupdatename@
+
+INSTALL_DIR ?= $(MAKETOP)/usr/bin
+OUTPUT_DIR  ?= $(PLATFORM)/output
+MKIMAGE     ?= $(OUTPUT_DIR)/bin/mkimage
+
+install:
+	install -d $(OUTPUT_DIR)
+	if [ -e $(MKIMAGE) ] ; then \
+		if [ -e $(usb_update_name).txt ]; then \
+			$(MKIMAGE) -A arm -O u-boot -T script -C none -n "usb_update" -a 0x8d000000 -d $(usb_update_name).txt usb_update ; \
+			install -m 644 usb_update $(OUTPUT_DIR) ; \
+		fi ; \
+	fi
+	install -m 644 @srcdir@/partition_info.inc $(OUTPUT_DIR)
+
+all:
+
+build:
+
+clean:
+	rm -rf Makefile usb_update $(usb_update_name).txt
+
+distclean: clean
+
+.PHONY: all build install clean distclean
+
+# Select suitable module
+ifeq ($(target_proc), pxs2)
+else ifeq ($(target_proc), ld6b)
+else ifeq ($(target_proc), ld20)
+else ifeq ($(target_proc), ld11)
+else
+  $(error Unknown target proc "$(target_proc)")
+endif

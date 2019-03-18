@@ -1,0 +1,25 @@
+target_proc  ?= @targetproc@
+target_board ?= @targetboard@
+sub_feature  ?= @subfeature@
+rom_product_name ?= @romproductname@
+
+install:
+	${MAKE} -C $(rom_product_name) install
+
+all:
+
+build:
+
+clean:
+
+distclean: clean
+	${MAKE} -C $(rom_product_name) distclean 
+	rm -rf config.log config.status autom4te.cache Makefile configure
+
+.PHONY: all build install clean distclean
+
+# Select suitable module
+ifeq ($(target_proc), ld20)
+else
+  $(error Unknown target proc "$(target_proc)")
+endif
