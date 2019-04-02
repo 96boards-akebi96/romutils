@@ -24,9 +24,7 @@ echo '*** Writing to normal area ...      ***'
 echo "***************************************"
 mmc dev 0 0
 
-fatload usb 0:1 $buf_addr $fw_folder/Image.gz            && mmc write $buf_addr 0x00000050 0x00006000
 fatload usb 0:1 $buf_addr $fw_folder/akebi96.dtb         && mmc write $buf_addr 0x00006050 0x00000040
-fatload usb 0:1 $buf_addr $fw_folder/rootfs.cpio.uboot   && mmc write $buf_addr @bsp_start_sect_hex@ @bsp_size_sect_hex@
 
 fatload usb 0:1 $buf_addr $fw_folder/boot.img            && mmc write $buf_addr @boot_start_sect_hex@ @boot_size_sect_hex@
 fatload usb 0:1 $buf_addr $fw_folder/recovery.img        && mmc write $buf_addr @recovery_start_sect_hex@ @recovery_size_sect_hex@
@@ -98,62 +96,27 @@ done
 ###
 setenv rom_addr @vendor_start_sect_hex@
 setenv rom_size @vendor_size_sect_hex@
-setenv rom_size_src 0x00080000
 rom_name=vendor.img
 
-fatload usb 0:1 0x88000000 ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
+fatload usb 0:1 $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
 
 ###
 ### userdate pertition information
 ###
 setenv rom_addr @userdata_start_sect_hex@
 setenv rom_size @userdata_size_sect_hex@
-setenv rom_size_src 0x00080000
 rom_name=userdata.img
 
-fatload usb 0:1 0x88000000 ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
+fatload usb 0:1 $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
 
 ###
 ### cache pertition information
 ###
 setenv rom_addr @cache_start_sect_hex@
 setenv rom_size @cache_size_sect_hex@
-setenv rom_size_src 0x00080000
 rom_name=cache.img
 
-fatload usb 0:1 0x88000000 ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
-
-###
-### vbmeta partition information
-###
-setenv filesize 0
-setenv loop_break 0
-setenv stdout nulldev
-setenv fname $fw_folder/vbmeta.img
-if fatsize usb 0:1 $fname; then
-else
-    setenv loop_break 1
-fi
-setenv stdout serial
-if itest $loop_break == 0; then
-    fatload usb 0:1 $buf_addr $fname && mmc write $buf_addr @vbmeta_start_sect_hex@ @vbmeta_size_sect_hex@
-fi
-
-###
-### dtb partition information
-###
-setenv filesize 0
-setenv loop_break 0
-setenv stdout nulldev
-setenv fname $fw_folder/dtb.img
-if fatsize usb 0:1 $fname; then
-else
-    setenv loop_break 1
-fi
-setenv stdout serial
-if itest $loop_break == 0; then
-    fatload usb 0:1 $buf_addr $fname && mmc write $buf_addr @dtb_start_sect_hex@ @dtb_size_sect_hex@
-fi
+fatload usb 0:1 $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
 
 echo "***************************************"
 echo "*** USB update is finished.         ***"
