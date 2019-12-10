@@ -5,6 +5,11 @@ fw_folder=/usb
 buf_addr=0x88000000
 zip_addr=0x98000000
 
+### default device values
+test x$devtype = x && setenv devtype usb
+test x$devnum  = x && setenv devnum  0
+test x$partnum = x && setenv partnum 1
+
 echo "***************************************"
 echo '*** set GPT partition ...           ***'
 echo "***************************************"
@@ -15,8 +20,8 @@ echo "***************************************"
 echo '*** Writing to boot partition 0 ... ***'
 echo "***************************************"
 mmc dev 0 1
-fatload usb 0:1 $buf_addr $fw_folder/@loaderimage@   && mmc write $buf_addr 0x00000000 0x00000100
-fatload usb 0:1 $buf_addr $fw_folder/@bootimage@     && mmc write $buf_addr 0x00000100 0x00000B00
+fatload ${devtype} ${devnum}:${partnum} $buf_addr $fw_folder/@loaderimage@   && mmc write $buf_addr 0x00000000 0x00000100
+fatload ${devtype} ${devnum}:${partnum} $buf_addr $fw_folder/@bootimage@     && mmc write $buf_addr 0x00000100 0x00000B00
 
 
 echo "***************************************"
@@ -24,10 +29,10 @@ echo '*** Writing to normal area ...      ***'
 echo "***************************************"
 mmc dev 0 0
 
-fatload usb 0:1 $buf_addr $fw_folder/akebi96.dtb         && mmc write $buf_addr 0x00006050 0x00000040
+fatload ${devtype} ${devnum}:${partnum} $buf_addr $fw_folder/akebi96.dtb         && mmc write $buf_addr 0x00006050 0x00000040
 
-fatload usb 0:1 $buf_addr $fw_folder/boot.img            && mmc write $buf_addr @boot_start_sect_hex@ @boot_size_sect_hex@
-fatload usb 0:1 $buf_addr $fw_folder/recovery.img        && mmc write $buf_addr @recovery_start_sect_hex@ @recovery_size_sect_hex@
+fatload ${devtype} ${devnum}:${partnum} $buf_addr $fw_folder/boot.img            && mmc write $buf_addr @boot_start_sect_hex@ @boot_size_sect_hex@
+fatload ${devtype} ${devnum}:${partnum} $buf_addr $fw_folder/recovery.img        && mmc write $buf_addr @recovery_start_sect_hex@ @recovery_size_sect_hex@
 
 ###
 ### system pertition information
@@ -57,7 +62,7 @@ while itest $loop_break == 0;
     fi;
     setenv filesize 0
     setenv stdout nulldev
-    if fatsize usb 0:1 $fname; then
+    if fatsize ${devtype} ${devnum}:${partnum} $fname; then
     else
         setenv loop_break 1
     fi
@@ -67,7 +72,7 @@ while itest $loop_break == 0;
         if itest ${rom_size} < ${rom_size_src}; then
             setenv rom_size_src "0x${rom_size}";
         fi
-        fatload usb 0:1 $zip_addr ${fname}    && unzip $zip_addr $buf_addr && mmc write $buf_addr ${rom_addr_str} ${rom_size_src}
+        fatload ${devtype} ${devnum}:${partnum} $zip_addr ${fname}    && unzip $zip_addr $buf_addr && mmc write $buf_addr ${rom_addr_str} ${rom_size_src}
         setexpr rom_addr ${rom_addr} + ${rom_size_src}
         rom_addr_str="0x${rom_addr}"
         setexpr rom_size ${rom_size} - ${rom_size_src}
@@ -98,7 +103,7 @@ setenv rom_addr @vendor_start_sect_hex@
 setenv rom_size @vendor_size_sect_hex@
 rom_name=vendor.img
 
-fatload usb 0:1 $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
+fatload ${devtype} ${devnum}:${partnum} $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
 
 ###
 ### userdate pertition information
@@ -107,7 +112,7 @@ setenv rom_addr @userdata_start_sect_hex@
 setenv rom_size @userdata_size_sect_hex@
 rom_name=userdata.img
 
-fatload usb 0:1 $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
+fatload ${devtype} ${devnum}:${partnum} $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
 
 ###
 ### cache pertition information
@@ -116,7 +121,7 @@ setenv rom_addr @cache_start_sect_hex@
 setenv rom_size @cache_size_sect_hex@
 rom_name=cache.img
 
-fatload usb 0:1 $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
+fatload ${devtype} ${devnum}:${partnum} $buf_addr ${fw_folder}/${rom_name} && mmc swrite ${buf_addr} ${rom_addr}
 
 echo "***************************************"
 echo "*** USB update is finished.         ***"
