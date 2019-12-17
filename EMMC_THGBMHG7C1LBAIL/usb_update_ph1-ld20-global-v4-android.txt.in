@@ -61,12 +61,12 @@ while itest $loop_break == 0;
         fi;
     fi;
     setenv filesize 0
-    setenv stdout nulldev
+    #setenv stdout nulldev
     if fatsize ${devtype} ${devnum}:${partnum} $fname; then
     else
         setenv loop_break 1
     fi
-    setenv stdout serial
+    #setenv stdout serial
     if itest $loop_break == 0; then
         # Write to eMMC
         if itest ${rom_size} < ${rom_size_src}; then
